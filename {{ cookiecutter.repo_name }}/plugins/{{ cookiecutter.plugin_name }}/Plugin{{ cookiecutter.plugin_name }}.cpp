@@ -47,8 +47,7 @@ Plugin{{ cookiecutter.plugin_name }}::Plugin{{ cookiecutter.plugin_name }}()
 // Init
 
 void Plugin{{ cookiecutter.plugin_name }}::initParameter(uint32_t index, Parameter& parameter) {
-    if (index >= paramCount)
-        return;
+    DISTRHO_SAFE_ASSERT_RETURN(index < paramCount, );
 
     parameter.ranges.min = 0.0f;
     parameter.ranges.max = 1.0f;
@@ -72,9 +71,9 @@ void Plugin{{ cookiecutter.plugin_name }}::initParameter(uint32_t index, Paramet
   This function will be called once, shortly after the plugin is created.
 */
 void Plugin{{ cookiecutter.plugin_name }}::initProgramName(uint32_t index, String& programName) {
-    if (index < presetCount) {
-        programName = factoryPresets[index].name;
-    }
+    DISTRHO_SAFE_ASSERT_RETURN(index < presetCount, );
+
+    programName = factoryPresets[index].name;
 }
 
 // -----------------------------------------------------------------------
@@ -91,6 +90,8 @@ void Plugin{{ cookiecutter.plugin_name }}::sampleRateChanged(double newSampleRat
   Get the current value of a parameter.
 */
 float Plugin{{ cookiecutter.plugin_name }}::getParameterValue(uint32_t index) const {
+    DISTRHO_SAFE_ASSERT_RETURN(index < paramCount, 0.0f);
+
     return fParams[index];
 }
 
@@ -98,6 +99,8 @@ float Plugin{{ cookiecutter.plugin_name }}::getParameterValue(uint32_t index) co
   Change a parameter value.
 */
 void Plugin{{ cookiecutter.plugin_name }}::setParameterValue(uint32_t index, float value) {
+    DISTRHO_SAFE_ASSERT_RETURN(index < paramCount, );
+
     fParams[index] = value;
 
     switch (index) {
@@ -116,10 +119,10 @@ void Plugin{{ cookiecutter.plugin_name }}::setParameterValue(uint32_t index, flo
   including realtime processing.
 */
 void Plugin{{ cookiecutter.plugin_name }}::loadProgram(uint32_t index) {
-    if (index < presetCount) {
-        for (int i=0; i < paramCount; i++) {
-            setParameterValue(i, factoryPresets[index].params[i]);
-        }
+    DISTRHO_SAFE_ASSERT_RETURN(index < presetCount, );
+
+    for (int i=0; i < paramCount; i++) {
+        setParameterValue(i, factoryPresets[index].params[i]);
     }
 }
 

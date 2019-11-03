@@ -51,6 +51,8 @@ UI{{ cookiecutter.plugin_name }}::~UI{{ cookiecutter.plugin_name }}() {
   This is called by the host to inform the UI about parameter changes.
 */
 void UI{{ cookiecutter.plugin_name }}::parameterChanged(uint32_t index, float value) {
+    DISTRHO_SAFE_ASSERT_RETURN(index < Plugin{{ cookiecutter.plugin_name }}::paramCount, );
+
     switch (index) {
         case Plugin{{ cookiecutter.plugin_name }}::paramVolumeLeft:
             // do something when volume_l param is set, such as update a widget
@@ -68,11 +70,11 @@ void UI{{ cookiecutter.plugin_name }}::parameterChanged(uint32_t index, float va
   This is called by the host to inform the UI about program changes.
 */
 void UI{{ cookiecutter.plugin_name }}::programLoaded(uint32_t index) {
-    if (index < presetCount) {
-        for (int i=0; i < Plugin{{ cookiecutter.plugin_name }}::paramCount; i++) {
-            // set values for each parameter and update their widgets
-            parameterChanged(i, factoryPresets[index].params[i]);
-        }
+    DISTRHO_SAFE_ASSERT_RETURN(index < presetCount, );
+
+    for (int i=0; i < Plugin{{ cookiecutter.plugin_name }}::paramCount; i++) {
+        // set values for each parameter and update their widgets
+        parameterChanged(i, factoryPresets[index].params[i]);
     }
 }
 
